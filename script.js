@@ -69,15 +69,68 @@ document.addEventListener("DOMContentLoaded", function () {
             data.unshift(newItem); // Add the new item to the beginning of the data array
             displayData(data); // Update the displayed data
             newItemInput.value = ""; // Clear the input field
+            // Create a new item
+
+
+fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "POST", // Use the HTTP POST method to create a new resource
+    headers: {
+        "Content-Type": "application/json", // Specify the content type as JSON
+    },
+    body: JSON.stringify(newItem), // Convert the JavaScript object to JSON string
+})
+.then(response => {
+    if (!response.ok) { // Check if the response status is not okay (e.g., 404 or 500)
+        throw new Error("Create request failed.");
+    }
+    return response.json(); // Parse the response JSON
+})
+.then(data => {
+    console.log("New item created:", data); // Log the response data
+})
+.catch(error => {
+    console.error(error); // Handle and log any errors
+});
         }
+        
     });
 
     // Function to handle editing an item
-    function editItem(item, listItem) {
+    function editItem(item, listItem) { 
+    
+        console.log(item, "item")
+        console.log(listItem, "listItem")
+        const id = item.id
         const newText = prompt("Edit item:", item.title); // Prompt for new text
         if (newText !== null) {
             item.title = newText; // Update the item's text
             listItem.querySelector(".item-text").textContent = newText; // Update the displayed text
+            
+// Update an existing item
+const updatedItem = {
+    title: "Updated Item",
+    description: "This item has been updated via the API.",
+};
+
+fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+    method: "PUT", // Use the HTTP PUT method to update an existing resource
+    headers: {
+        "Content-Type": "application/json", // Specify the content type as JSON
+    },
+    body: JSON.stringify(updatedItem), // Convert the JavaScript object to JSON string
+})
+.then(response => {
+    if (!response.ok) { // Check if the response status is not okay (e.g., 404 or 500)
+        throw new Error("Update request failed.");
+    }
+    return response.json(); // Parse the response JSON
+})
+.then(data => {
+    console.log("Item updated:", data); // Log the updated item data
+})
+.catch(error => {
+    console.error(error); // Handle and log any errors
+});
         }
     }
 
@@ -93,4 +146,3 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial fetch of data when the page loads
     fetchData();
 });
-
